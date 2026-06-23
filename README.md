@@ -34,7 +34,3 @@ go mod tidy
 
 Использует [goldmark](https://github.com/yuin/goldmark) для парсинга
 и [lipgloss](https://github.com/charmbracelet/lipgloss) для стилизации.
-
-## Источник вдохновения
-
-[glow](https://github.com/charmbracelet/glow) из HelloGitHub #121
