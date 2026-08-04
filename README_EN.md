@@ -17,6 +17,10 @@ Read Markdown in the terminal — with syntax highlighting and themes.
 
 Open a file, see readable text. No browser, no IDE.
 
+<p align="center">
+  <img src="assets/screenshot.png" alt="Real output: glow --width 80 README.md, this repository's own README" width="600" />
+</p>
+
 ## Run
 
 ```bash

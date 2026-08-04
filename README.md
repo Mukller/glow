@@ -17,6 +17,10 @@
 
 Открыл файл, увидел нормальный текст. Без браузера, без IDE.
 
+<p align="center">
+  <img src="assets/screenshot.png" alt="Реальный вывод: glow --width 80 README.md, собственный README этого репозитория" width="600" />
+</p>
+
 ## Запуск
 
 ```bash

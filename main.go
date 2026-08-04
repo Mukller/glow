@@ -111,8 +111,10 @@ func (r *Renderer) renderNode(node ast.Node, src []byte, entering bool) (ast.Wal
 		}
 
 	case *ast.CodeSpan:
-		if !entering {
-			text := r.flushInline()
+		if entering {
+			r.pushInlineScope()
+		} else {
+			text := r.popInlineScope()
 			r.inlineAppend(r.theme.Code.Render("`" + text + "`"))
 		}
 
@@ -135,15 +137,19 @@ func (r *Renderer) renderNode(node ast.Node, src []byte, entering bool) (ast.Wal
 		}
 
 	case *ast.Link:
-		if !entering {
-			text := r.flushInline()
+		if entering {
+			r.pushInlineScope()
+		} else {
+			text := r.popInlineScope()
 			dest := string(n.Destination)
 			r.inlineAppend(r.theme.Link.Render(text) + " (" + dest + ")")
 		}
 
 	case *ast.Emphasis:
-		if !entering {
-			text := r.flushInline()
+		if entering {
+			r.pushInlineScope()
+		} else {
+			text := r.popInlineScope()
 			if n.Level == 2 {
 				r.inlineAppend(r.theme.Bold.Render(text))
 			} else {
@@ -166,13 +172,42 @@ func (r *Renderer) renderNode(node ast.Node, src []byte, entering bool) (ast.Wal
 	return ast.WalkContinue, nil
 }
 
-// inline буфер для текста внутри параграфов/заголовков
-var inlineBuf strings.Builder
+// inline буфер для текста внутри параграфов/заголовков.
+//
+// Реализован как стек: каждый вложенный inline-спан (ссылка, emphasis,
+// код) на входе получает СВОЙ собственный буфер и на выходе забирает
+// только то, что накопилось внутри него самого — а не весь текст,
+// накопленный с начала параграфа. Раньше был один общий strings.Builder
+// на весь документ, и flushInline() любого узла (например, второй ссылки
+// в абзаце) забирал уже отрендеренный ANSI-вывод ПЕРВОЙ ссылки и заново
+// прогонял его через Style.Render(), что дробило escape-коды посимвольно
+// и ломало вывод для любого абзаца с двумя и более inline-стилями подряд.
+var inlineStack = []*strings.Builder{{}}
 
-func (r *Renderer) inlineAppend(s string) { inlineBuf.WriteString(s) }
+func (r *Renderer) inlineAppend(s string) {
+	inlineStack[len(inlineStack)-1].WriteString(s)
+}
+
+// pushInlineScope открывает новую область для вложенного inline-спана.
+func (r *Renderer) pushInlineScope() {
+	inlineStack = append(inlineStack, &strings.Builder{})
+}
+
+// popInlineScope закрывает текущую область, возвращая только то, что
+// было добавлено внутри неё (используется ссылками/emphasis/кодом).
+func (r *Renderer) popInlineScope() string {
+	n := len(inlineStack)
+	s := inlineStack[n-1].String()
+	inlineStack = inlineStack[:n-1]
+	return s
+}
+
+// flushInline забирает содержимое текущей (самой верхней) области —
+// используется блочными узлами (параграф, заголовок, пункт списка).
 func (r *Renderer) flushInline() string {
-	s := inlineBuf.String()
-	inlineBuf.Reset()
+	top := inlineStack[len(inlineStack)-1]
+	s := top.String()
+	top.Reset()
 	return s
 }
 
