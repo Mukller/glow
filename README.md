@@ -6,6 +6,13 @@
 
 # glow
 
+<p align="center">
+  <a href="https://github.com/Mukller">
+    <img src="https://img.shields.io/badge/Anton%20Petnitsky-Developer-0d1117?style=for-the-badge&logo=github&logoColor=white&labelColor=0d1117&color=58a6ff" alt="Anton Petnitsky" />
+  </a>
+</p>
+
+
 Читай Markdown прямо в терминале — с подсветкой и темами.
 
 Открыл файл, увидел нормальный текст. Без браузера, без IDE.

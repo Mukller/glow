@@ -6,6 +6,13 @@
 
 # glow
 
+<p align="center">
+  <a href="https://github.com/Mukller">
+    <img src="https://img.shields.io/badge/Anton%20Petnitsky-Developer-0d1117?style=for-the-badge&logo=github&logoColor=white&labelColor=0d1117&color=58a6ff" alt="Anton Petnitsky" />
+  </a>
+</p>
+
+
 Read Markdown in the terminal — with syntax highlighting and themes.
 
 Open a file, see readable text. No browser, no IDE.
